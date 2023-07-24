@@ -27,17 +27,20 @@ def bresenham(start, end):
         return [(p1[0] + round(y * (1 / slope)), p1[1] + y) for y in range(0, p2[1] - p1[1] + 1)]
 
 ''' 
-Simple function to output the chosen squares. Can be used to visualise any selection of 
-coordinates in a grid
+Simple function to visualise sets of coordinates in a grid with any character. 
+The data arg is a dict. The key is the character and the value  is the set of 
+coordinates to be represented by the character.
+If a coordinate appears in multiple sets of coordinates, the character used 
+will be the last one for which the coordinate appears. 
 '''
-
-def visualise(bottomleft, topright, squares):
-    for y in range(topright[1], -1, bottomleft[1] - 1):
+def visualise(bottomleft, topright, data):
+    for y in range(topright[1], bottomleft[1] - 1, -1):
         for x in range(bottomleft[0], topright[0] + 1): 
-            if (x, y) in squares:
-                print('#', end=' ')
-            else:
-                print('.', end=' ')
+            char = ' '
+            for c in data.keys():
+                if (x, y) in data[c]:
+                    char = c
+            print(char, end=' ')
         print()
 
-visualise((0, 0), (20, 20), bresenham((0, 0), (0, 20)) + bresenham((0, 0), (20, 0)) + bresenham((3,8), (8, 1)))
+#visualise((0, 0), (20, 20), bresenham((0, 0), (0, 20)) + bresenham((0, 0), (20, 0)) + bresenham((3,14), (18, 9)) + bresenham((6, 2), (18, 19)))
