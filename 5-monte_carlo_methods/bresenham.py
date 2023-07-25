@@ -28,8 +28,8 @@ def bresenham(start, end):
 
 ''' 
 Simple function to visualise sets of coordinates in a grid with any character. 
-The data arg is a dict. The key is the character and the value  is the set of 
-coordinates to be represented by the character.
+The data arg is a dict. The key is the character and the value is the set of 
+coordinates to be represented by that character.
 If a coordinate appears in multiple sets of coordinates, the character used 
 will be the last one for which the coordinate appears. 
 '''
@@ -42,5 +42,3 @@ def visualise(bottomleft, topright, data):
                     char = c
             print(char, end=' ')
         print()
-
-#visualise((0, 0), (20, 20), bresenham((0, 0), (0, 20)) + bresenham((0, 0), (20, 0)) + bresenham((3,14), (18, 9)) + bresenham((6, 2), (18, 19)))
