@@ -6,7 +6,13 @@ import matplotlib.pyplot as plt
 # A state is a 2-tuple of the current position: (x_pos, y_pos)
 
 class Environment:
-    def __init__(self):
+    '''
+    The "ex" argument signifies which exercise we want to solve. This can be left as None to solve 
+    the windy gridworld task as stated in the original example (with deterministic wind and 
+    #vertical / horizontal movement) or set to 9 to add King's moves, or set to 10 to add stochastic wind. 
+    '''
+    def __init__(self, ex=None):
+        self.ex = ex
         self.world_width = 10
         self.world_height = 7
         self.actions = [
@@ -15,6 +21,15 @@ class Environment:
             (1, 0), # right
             (0, 1) # up
         ]
+        # Add diagonal moves
+        if ex == 9 or ex == 10:
+            self.actions += [
+                (-1, -1), 
+                (-1, 1), 
+                (1, -1),
+                (1, 1),
+                (0, 0)
+            ]
         self.start_state = (1, 4)
         self.goal_state = (8, 4)
     
@@ -28,11 +43,17 @@ class Environment:
         xpos += action[0]
         ypos += action[1]
 
-        # account for wind
+        # account for wind (stochastic wind if ex 10)
         if xpos in (4, 5, 6, 9):
-            ypos += 1
+            if self.ex == 10:
+                ypos += random.choice((0, 1, 2))
+            else:
+                ypos += 1
         if xpos in (7, 8):
-            ypos += 2
+            if self.ex == 10:
+                ypos += random.choice((1, 2, 3))
+            else:
+                ypos += 2
 
         # clamp to world limits
         xpos = min(max(xpos, 1), self.world_width)
@@ -59,7 +80,7 @@ class Agent:
         states = [(x + 1, y + 1) for x in range(self.env.world_width)
                                  for y in range(self.env.world_height)]
         entries = [(state, action) for state in states for action in self.env.actions]
-        self.q = {s_a : 0 for s_a in entries}
+        self.q = {s_a : -50 for s_a in entries}
         # Set the goal state to 0
         for a in self.env.actions:
             self.q[(self.env.goal_state, a)] = 0
@@ -80,7 +101,7 @@ class Agent:
     def sarsa_learn(self, lr, s1, a1, r, s2, a2):
         self.q[(s1, a1)] += lr * (r + self.q[(s2, a2)] - self.q[(s1, a1)])
 
-env = Environment()
+env = Environment(ex=10)
 agent = Agent(env)
 
 steps = 0
@@ -96,7 +117,7 @@ epsilon = 0.1
 lr = 0.5
 
 # The Sarsa algorithm as described in section 6.4
-while steps <= 100000:
+while steps <= 8000:
     state = env.start_state
     action = agent.epsilon_greedy_policy(state, epsilon)
     while state != env.goal_state:
@@ -110,6 +131,7 @@ while steps <= 100000:
     step_values.append(steps)
     episode_values.append(episodes)
 
+'''
 # Show off our optimal policy with a single run
 state = env.start_state
 while state != env.goal_state:
@@ -118,6 +140,6 @@ while state != env.goal_state:
     state, action = new_state, new_action
     env.visualise_state(state)
     time.sleep(0.1)
-
+'''
 plt.plot(step_values, episode_values, color='b')
 plt.show()
