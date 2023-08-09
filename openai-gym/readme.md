@@ -1,0 +1,1 @@
+This folder is for some of my own experimentation into implemenenting environemnts using OpenAI Gymnasium and solving them using Reinforcement Learning. The problems solved may not necessarily be related to the Reinforcement Learning: An Introduction book. 
